@@ -5,6 +5,8 @@ import math
 
 qt_individuos = 20
 dim = 2
+taxa_mutacao = 0.3
+taxa_perturbacao = 0.05
 
 #população inicial de 20 com individuos entre [-5.12, 5.12]
 def rastrigin(X):
@@ -41,7 +43,24 @@ def seleciona(pop_fit):
   return selecionados
 
 def muta(selecionados):
+  mutados = []
+  for _ in range(math.floor(taxa_mutacao*qt_individuos)):
+    pos = random.randint(0, qt_individuos-1)
+    dimensao = random.randint(0, dim-1)
+    operacao = random.randint(0, 1)
 
+    ind = selecionados[pos][0:dim]
+    #realiza mutacao
+    if operacao == 0:
+      ind[dimensao] -= (taxa_mutacao*ind[dimensao])
+    else:
+      ind[dimensao] += (taxa_mutacao*ind[dimensao])
+    #calcula novo fitness
+    fit = avalia(ind)
+
+    ind.append(fit)
+    mutados.append(ind)
+  return mutados
 
 # def atualiza()
 
@@ -49,10 +68,10 @@ if __name__ == '__main__':
   x = [0, 0]
   pop = gera_populacao()
   #representa os individuos na forma [individuo, fitness]
-  pop_fit = []
+  pop_fit = pop
   for i in range(qt_individuos):
     fit = avalia(pop[i])
-    pop_fit.append([pop[i], fit])
-
+    pop_fit[i].append(fit)
+    
   selecionados = seleciona(pop_fit)
-
+  mutados = muta(selecionados)
