@@ -62,7 +62,16 @@ def muta(selecionados):
     mutados.append(ind)
   return mutados
 
-# def atualiza()
+def sort_fit(val):
+  return val[dim]
+
+def atualiza(selecionados, mutados):
+  nova_pop = []
+  nova_pop += selecionados
+  nova_pop += mutados
+  #ordena os individuos pelo fitness
+  nova_pop.sort(key = sort_fit)
+  return nova_pop[0:qt_individuos]
 
 if __name__ == '__main__':
   x = [0, 0]
@@ -75,3 +84,4 @@ if __name__ == '__main__':
     
   selecionados = seleciona(pop_fit)
   mutados = muta(selecionados)
+  nova_pop = atualiza(selecionados, mutados)
