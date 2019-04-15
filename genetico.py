@@ -5,9 +5,9 @@ import math
 
 qt_individuos = 20
 dim = 2
-taxa_mutacao = 0.3
+taxa_mutacao = 0.5
 taxa_perturbacao = 0.05
-qt_interacoes = 100
+qt_interacoes = 50
 
 #população inicial de 20 com individuos entre [-5.12, 5.12]
 def rastrigin(X):
@@ -71,11 +71,10 @@ def atualiza(selecionados, mutados):
   nova_pop += selecionados
   nova_pop += mutados
   #ordena os individuos pelo fitness
-  nova_pop.sort(key = sort_fit)
+  nova_pop.sort(key = sort_fit, reverse = True)
   return nova_pop[0:qt_individuos]
 
 if __name__ == '__main__':
-  x = [0, 0]
   pop = gera_populacao()
   #representa os individuos na forma [individuo, fitness]
   pop_fit = pop
@@ -83,9 +82,12 @@ if __name__ == '__main__':
     fit = avalia(pop[i])
     pop_fit[i].append(fit)
 
-  for _ in range(qt_interacoes):  
+  for i in range(qt_interacoes):
     selecionados = seleciona(pop_fit)
+    # print("selecionados: ", selecionados)
     mutados = muta(selecionados)
+    # print("mutados: ", mutados)
     nova_pop = atualiza(selecionados, mutados)
+    # print("nova pop: ", nova_pop)
     pop_fit = nova_pop
-    print("melhor ind: ", nova_pop[0], " valor: ", rastrigin(nova_pop[0][0:dim]))
+    print("i: ", i, " melhor ind: ", nova_pop[0], " valor: ", rastrigin(nova_pop[0][0:dim]))
