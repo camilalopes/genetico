@@ -7,7 +7,7 @@ qt_individuos = 20
 dim = 2
 taxa_mutacao = 0.3
 taxa_perturbacao = 0.05
-qt_interacoes = 30
+qt_interacoes = 100
 
 #população inicial de 20 com individuos entre [-5.12, 5.12]
 def rastrigin(X):
@@ -27,7 +27,7 @@ def gera_populacao():
   return pop
 
 def avalia(X):
-  fitness = -(rastrigin(X))
+  fitness = 1/(1+(rastrigin(X)))
   return fitness
 
 def seleciona(pop_fit):
@@ -88,4 +88,4 @@ if __name__ == '__main__':
     mutados = muta(selecionados)
     nova_pop = atualiza(selecionados, mutados)
     pop_fit = nova_pop
-    print("melhor ind: ", nova_pop[0])
+    print("melhor ind: ", nova_pop[0], " valor: ", rastrigin(nova_pop[0][0:dim]))
