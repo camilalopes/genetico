@@ -7,6 +7,7 @@ qt_individuos = 20
 dim = 2
 taxa_mutacao = 0.3
 taxa_perturbacao = 0.05
+qt_interacoes = 30
 
 #população inicial de 20 com individuos entre [-5.12, 5.12]
 def rastrigin(X):
@@ -81,7 +82,10 @@ if __name__ == '__main__':
   for i in range(qt_individuos):
     fit = avalia(pop[i])
     pop_fit[i].append(fit)
-    
-  selecionados = seleciona(pop_fit)
-  mutados = muta(selecionados)
-  nova_pop = atualiza(selecionados, mutados)
+
+  for _ in range(qt_interacoes):  
+    selecionados = seleciona(pop_fit)
+    mutados = muta(selecionados)
+    nova_pop = atualiza(selecionados, mutados)
+    pop_fit = nova_pop
+    print("melhor ind: ", nova_pop[0])
