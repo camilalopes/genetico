@@ -5,11 +5,11 @@ import math
 
 qt_individuos = 20
 dim = 2
-taxa_mutacao = 0.5
+taxa_cruzamento = 0.9
+taxa_mutacao = 0.1
 taxa_perturbacao = 0.05
-qt_interacoes = 50
+qt_interacoes = 100
 
-#população inicial de 20 com individuos entre [-5.12, 5.12]
 def rastrigin(X):
     n = len(X)
     A = 10
@@ -43,14 +43,38 @@ def seleciona(pop_fit):
       selecionados.append(pop_fit[pos2])
   return selecionados
 
-def muta(selecionados):
+def cruza(selecionados):
+  alpha = 0.9
+  filhos = []
+  while len(filhos) < qt_individuos:
+    pai = random.randint(0, qt_individuos-1)
+    mae = random.randint(0, qt_individuos-1)
+    terao_filhos = random.uniform(0, 1)
+    if terao_filhos < taxa_cruzamento:
+      filho1 = []
+      filho2 = []
+      for d in range(dim):
+        filho1.append(alpha*selecionados[pai][d] + (1-alpha)*selecionados[mae][d])
+        filho2.append((1-alpha)*selecionados[pai][d] + (alpha)*selecionados[mae][d])
+      
+      #calcula novo fitness
+      fit = avalia(filho1)
+      filho1.append(fit)
+      fit = avalia(filho2)
+      filho2.append(fit)
+      #adiciona na lista de filhos
+      filhos.append(filho1)
+      filhos.append(filho2)
+  return filhos
+
+def muta(filhos):
   mutados = []
   for _ in range(math.floor(taxa_mutacao*qt_individuos)):
     pos = random.randint(0, qt_individuos-1)
     dimensao = random.randint(0, dim-1)
     operacao = random.randint(0, 1)
 
-    ind = selecionados[pos][0:dim]
+    ind = filhos[pos][0:dim]
     #realiza mutacao
     if operacao == 0:
       ind[dimensao] -= (taxa_mutacao*ind[dimensao])
@@ -82,12 +106,14 @@ if __name__ == '__main__':
     fit = avalia(pop[i])
     pop_fit[i].append(fit)
 
-  for i in range(qt_interacoes):
+  for i in range(50):
     selecionados = seleciona(pop_fit)
     # print("selecionados: ", selecionados)
-    mutados = muta(selecionados)
+    filhos = cruza(selecionados)
+    # print("filhos: ", filhos)
+    mutados = muta(filhos)
     # print("mutados: ", mutados)
-    nova_pop = atualiza(selecionados, mutados)
+    nova_pop = atualiza(filhos, mutados)
     # print("nova pop: ", nova_pop)
     pop_fit = nova_pop
     print("i: ", i, " melhor ind: ", nova_pop[0], " valor: ", rastrigin(nova_pop[0][0:dim]))
