@@ -3,10 +3,11 @@ import random
 import numpy as np
 import math
 
+qt_execucoes = 30
 qt_individuos = 20
 dim = 2
 taxa_cruzamento = 0.9
-taxa_mutacao = 0.1
+taxa_mutacao = 0.3
 taxa_perturbacao = 0.05
 qt_interacoes = 100
 
@@ -67,6 +68,55 @@ def cruza(selecionados):
       filhos.append(filho2)
   return filhos
 
+def cruza2(selecionados):
+  filhos = []
+  while len(filhos) < qt_individuos:
+    pai = random.randint(0, qt_individuos-1)
+    mae = random.randint(0, qt_individuos-1)
+    terao_filhos = random.uniform(0, 1)
+    if terao_filhos < taxa_cruzamento:
+      filho1 = []
+      filho2 = []
+      ponto_corte = random.randint(0, dim-1)
+      for i in range(ponto_corte+1):
+        filho1.append(selecionados[pai][i])
+        filho2.append(selecionados[mae][i])
+      for i in range(ponto_corte+1, dim):
+        filho1.append(selecionados[mae][i])
+        filho2.append(selecionados[pai][i])
+      #calcula novo fitness
+      fit = avalia(filho1)
+      filho1.append(fit)
+      fit = avalia(filho2)
+      filho2.append(fit)
+      #adiciona na lista de filhos
+      filhos.append(filho1)
+      filhos.append(filho2)
+  return filhos
+
+def cruza3(selecionados):
+  alpha = 0.9
+  filhos = []
+  while len(filhos) < qt_individuos:
+    pai = random.randint(0, qt_individuos-1)
+    mae = random.randint(0, qt_individuos-1)
+    terao_filhos = random.uniform(0, 1)
+    if terao_filhos < taxa_cruzamento:
+      filho1 = []
+      for d in range(dim):
+        #avalia quem tem o melhor fitness
+        if selecionados[mae][dim] > selecionados[pai][dim]:
+          filho1.append(alpha*selecionados[mae][d] + (1-alpha)*selecionados[pai][d])
+        else:
+          filho1.append((1-alpha)*selecionados[mae][d] + (alpha)*selecionados[pai][d])
+      #calcula novo fitness
+      fit = avalia(filho1)
+      filho1.append(fit)
+      #adiciona na lista de filhos
+      filhos.append(filho1)
+  return filhos
+
+
 def muta(filhos):
   mutados = []
   for _ in range(math.floor(taxa_mutacao*qt_individuos)):
@@ -99,21 +149,26 @@ def atualiza(selecionados, mutados):
   return nova_pop[0:qt_individuos]
 
 if __name__ == '__main__':
-  pop = gera_populacao()
-  #representa os individuos na forma [individuo, fitness]
-  pop_fit = pop
-  for i in range(qt_individuos):
-    fit = avalia(pop[i])
-    pop_fit[i].append(fit)
 
-  for i in range(50):
-    selecionados = seleciona(pop_fit)
-    # print("selecionados: ", selecionados)
-    filhos = cruza(selecionados)
-    # print("filhos: ", filhos)
-    mutados = muta(filhos)
-    # print("mutados: ", mutados)
-    nova_pop = atualiza(filhos, mutados)
-    # print("nova pop: ", nova_pop)
-    pop_fit = nova_pop
-    print("i: ", i, " melhor ind: ", nova_pop[0], " valor: ", rastrigin(nova_pop[0][0:dim]))
+  for _ in range(qt_execucoes):
+    pop = gera_populacao()
+    #representa os individuos na forma [individuo, fitness]
+    pop_fit = pop
+    for i in range(qt_individuos):
+      fit = avalia(pop[i])
+      pop_fit[i].append(fit)
+
+    soma = 0.0
+    for i in range(50):
+      selecionados = seleciona(pop_fit)
+      # print("selecionados: ", selecionados)
+      filhos = cruza3(selecionados)
+      # print("filhos: ", filhos)
+      mutados = muta(filhos)
+      # print("mutados: ", mutados)
+      nova_pop = atualiza(filhos, mutados)
+      # print("nova pop: ", nova_pop)
+      pop_fit = nova_pop
+    print(nova_pop[0], " valor: ", rastrigin(nova_pop[0][0:dim]))
+    soma += rastrigin(nova_pop[0][0:dim])
+  print("media: ", soma/qt_execucoes)
