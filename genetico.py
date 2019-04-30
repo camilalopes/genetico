@@ -28,7 +28,8 @@ def gera_populacao():
   return pop
 
 def avalia(X):
-  fitness = 1/(1+(rastrigin(X)))
+  # fitness = 1/(1+(rastrigin(X)))
+  fitness = 1/rastrigin(X)+0.0001
   return fitness
 
 def seleciona(pop_fit):
@@ -116,7 +117,6 @@ def cruza3(selecionados):
       filhos.append(filho1)
   return filhos
 
-
 def muta(filhos):
   mutados = []
   for _ in range(math.floor(taxa_mutacao*qt_individuos)):
@@ -140,10 +140,11 @@ def muta(filhos):
 def sort_fit(val):
   return val[dim]
 
-def atualiza(selecionados, mutados):
+def atualiza(selecionados, mutados, melhor):
   nova_pop = []
   nova_pop += selecionados
   nova_pop += mutados
+  nova_pop.append(melhor)
   #ordena os individuos pelo fitness
   nova_pop.sort(key = sort_fit, reverse = True)
   return nova_pop[0:qt_individuos]
@@ -159,14 +160,17 @@ if __name__ == '__main__':
       pop_fit[i].append(fit)
 
     soma = 0.0
-    for i in range(50):
+    for i in range(qt_interacoes):
+      pop_fit.sort(key = sort_fit, reverse = True)
+      # print("pop: ", pop_fit)
+      melhor = pop_fit[0]
       selecionados = seleciona(pop_fit)
       # print("selecionados: ", selecionados)
       filhos = cruza3(selecionados)
       # print("filhos: ", filhos)
       mutados = muta(filhos)
       # print("mutados: ", mutados)
-      nova_pop = atualiza(filhos, mutados)
+      nova_pop = atualiza(filhos, mutados, melhor)
       # print("nova pop: ", nova_pop)
       pop_fit = nova_pop
     print(nova_pop[0], " valor: ", rastrigin(nova_pop[0][0:dim]))
