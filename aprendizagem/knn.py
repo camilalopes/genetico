@@ -15,10 +15,10 @@ class Knn():
     def retorna_distancia(self, elemento) -> float:
         return elemento[0]
 
-    def get_vizinhos(self, centro_consulta, elementos) -> list:
+    def get_vizinhos(self, centro_consulta) -> list:
         vizinhos: list = []
         k_vizinhos: list = []
-        for elem in elementos:
+        for elem in self.elementos:
             distancia = self.calcula_distancia(centro_consulta, elem)
             vizinhos.append([distancia, elem])
         vizinhos.sort(key=self.retorna_distancia)
@@ -41,3 +41,7 @@ class Knn():
     def treina(self, elementos) -> None:
         self.elementos = elementos
     
+    def prediz(self, centro_consulta) -> str:
+        vizinhos = self.get_vizinhos(centro_consulta)
+        classe = self.votacao(vizinhos)
+        return classe
