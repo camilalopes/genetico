@@ -19,7 +19,7 @@ class Knn():
         vizinhos: list = []
         k_vizinhos: list = []
         for elem in self.elementos:
-            distancia = self.calcula_distancia(centro_consulta, elem)
+            distancia = self.calcula_distancia(centro_consulta[0], elem[0])
             vizinhos.append([distancia, elem])
         vizinhos.sort(key=self.retorna_distancia)
 
@@ -37,10 +37,10 @@ class Knn():
                 classes[v[1]] = 1
         mais_votado = max(classes.keys(), key=(lambda i: classes[i]))
         return mais_votado
-    
+
     def treina(self, elementos) -> None:
         self.elementos = elementos
-    
+
     def prediz(self, centro_consulta) -> str:
         vizinhos = self.get_vizinhos(centro_consulta)
         classe = self.votacao(vizinhos)
