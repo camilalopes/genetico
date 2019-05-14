@@ -20,7 +20,8 @@ class Kmeans():
         return elemento[0]
 
     def inicializa_centroids(self) -> None:
-        for i in range(0, self.k):
+        self.centroids = []
+        for i in range(self.k):
             self.centroids.append(copy.deepcopy(self.elementos[rand.randint(0, len(self.elementos)-1)]))
             self.centroids[i][1] = i
 
@@ -33,7 +34,7 @@ class Kmeans():
             distancias.sort(key=self.retorna_distancia)
             self.elementos[i][1] = distancias[0][1][1]
         
-    def calcula_centroid(self) -> None:
+    def calcula_centroids(self) -> None:
         dimensao = len(self.elementos[0][0])
         soma = [[0]*dimensao]*self.k
         count = [0]*self.k
@@ -44,6 +45,8 @@ class Kmeans():
                 soma[grupo][dim] += elem[0][dim]
         
         for i in range(self.k):
+            if count[i] == 0:
+                continue
             novo_elemento = []
             for j in range(dimensao):
                 novo_elemento.append(soma[i][j]/count[i])
@@ -53,7 +56,10 @@ class Kmeans():
         for elem in elementos:
             self.elementos.append([elem, -1])
 
-    def prediz(self, centro_consulta) -> str:
-        vizinhos = self.get_vizinhos(centro_consulta)
-        classe = self.votacao(vizinhos)
-        return classe
+    def agrupa(self, qt_iteracoes) -> list:
+        self.inicializa_centroids()
+        print(self.centroids)
+        for _ in range(qt_iteracoes):
+            self.cria_grupos()
+            self.calcula_centroids()
+        return self.elementos
