@@ -33,15 +33,21 @@ class Kmeans():
             distancias.sort(key=self.retorna_distancia)
             self.elementos[i][1] = distancias[0][1][1]
         
-    def votacao(self, vizinhos) -> str:
-        classes = {}
-        for v in vizinhos:
-            if v[1] in classes.keys():
-                classes[v[1]] += 1
-            else:
-                classes[v[1]] = 1
-        mais_votado = max(classes.keys(), key=(lambda i: classes[i]))
-        return mais_votado
+    def calcula_centroid(self) -> None:
+        dimensao = len(self.elementos[0][0])
+        soma = [[0]*dimensao]*self.k
+        count = [0]*self.k
+        for elem in self.elementos:
+            grupo = elem[1]
+            count[grupo] += 1
+            for dim in range(dimensao):
+                soma[grupo][dim] += elem[0][dim]
+        
+        for i in range(self.k):
+            novo_elemento = []
+            for j in range(dimensao):
+                novo_elemento.append(soma[i][j]/count[i])
+            self.centroids[i][0] = copy.deepcopy(novo_elemento)
 
     def set_elementos(self, elementos) -> None:
         for elem in elementos:
