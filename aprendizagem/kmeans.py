@@ -25,13 +25,13 @@ class Kmeans():
             self.centroids[i][1] = i
 
     def cria_grupos(self) -> None:
-        for elem in self.elementos:
+        for i in range(len(self.elementos)):
             distancias: list = []
             for centroid in self.centroids:
-                distancia = self.calcula_distancia(elem[0], centroid[0])
-                distancias.append([distancia, elem])
+                distancia = self.calcula_distancia(self.elementos[i][0], centroid[0])
+                distancias.append([distancia, centroid])
             distancias.sort(key=self.retorna_distancia)
-            elem[1] = distancias[0][1][1]
+            self.elementos[i][1] = distancias[0][1][1]
         
     def votacao(self, vizinhos) -> str:
         classes = {}
