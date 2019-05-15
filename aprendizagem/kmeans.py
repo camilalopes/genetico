@@ -36,7 +36,7 @@ class Kmeans():
         
     def calcula_centroids(self) -> None:
         dimensao = len(self.elementos[0][0])
-        soma = [[0]*dimensao]*self.k
+        soma = [[0] * dimensao for i in range(self.k)]
         count = [0]*self.k
         for elem in self.elementos:
             grupo = elem[1]
@@ -58,7 +58,6 @@ class Kmeans():
 
     def agrupa(self, qt_iteracoes) -> list:
         self.inicializa_centroids()
-        print(self.centroids)
         for _ in range(qt_iteracoes):
             self.cria_grupos()
             self.calcula_centroids()
