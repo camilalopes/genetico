@@ -1,6 +1,6 @@
 import unittest
 
-import knn.Knn
+from knn import Knn
 
 class KnnTestCase(unittest.TestCase):
 	self.knn = Knn(3)
